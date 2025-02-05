@@ -75,7 +75,8 @@ server <- function(input, output, session) {
       group_by(set_name, field_name) %>%
       mutate(
         mean_yield = mean(Yield, na.rm = TRUE),  
-        yield_percentage = (Yield / mean_yield) * 100  
+        yield_percentage = (Yield / mean_yield) * 100
+        
       ) %>%
       ungroup()  
   })
@@ -97,7 +98,7 @@ server <- function(input, output, session) {
   # Générer le graphique
   output$yield_plot <- renderPlot({
     req(filtered_data())  
-    
+    Total=nrow(filtered_data())
     result <- filtered_data() %>%
       group_by(set_name, field_name) %>%
       mutate(
@@ -114,10 +115,9 @@ server <- function(input, output, session) {
       summarise(
         Mean_Yield_Percentage = mean(yield_percentage, na.rm = TRUE),
         Count = n(),
-        Total = n(),  # Remplacez nrow(result) par n()
         Deactivated_Count = sum(IsDeactivated == TRUE),
-        Deactivated_Percentage = (Deactivated_Count / Count) * 100,
-        Percentage = (Count / sum(Count)) * 100,  # Calculer le pourcentage par rapport au total
+        Deactivated_Percentage = (Deactivated_Count / Count)*100,
+        Percentage = (Count / Total)*100,  # Calculer le pourcentage par rapport au total
         .groups = "drop"
       ) %>%
       filter(Count > 1)  # Exclure les classes avec Count = 1
@@ -144,8 +144,8 @@ server <- function(input, output, session) {
         labs(
           x = "CCVU",
           y = "IEMEG",
-          fill = "Moyenne Yield",
-          title = "Moyenne de Yield (%) et distribution des classes"
+          fill = "Yield average",
+          title = "Yield Average by class"
         ) +
         theme_minimal() +
         theme(
