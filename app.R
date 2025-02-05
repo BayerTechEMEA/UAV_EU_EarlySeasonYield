@@ -36,10 +36,13 @@ ui <- fluidPage(
     
     mainPanel(
       tabsetPanel(
+        
         tabPanel("Plot", 
                  textOutput("total_plots"),
                  textOutput("mean_ccvu"),  
                  plotOutput("yield_plot", height = "850px", width = "1200px")),
+        tabPanel("App Information", 
+                 textOutput("App_information")),
         
         tabPanel("Table", 
                  DTOutput("filtered_data_table"))  # Ajout d'un tableau pour les données filtrées
@@ -80,7 +83,11 @@ server <- function(input, output, session) {
       ) %>%
       ungroup()  
   })
-  
+  output$App_information<- renderText({paste("This app has been created to vizualize UAV data linked with Yield.
+                           The yield is expressed at the plot level in percentage from the set.
+                           Pct, represent the percentage of the class in the field.
+                           Deact, represent the percentage of plot deactiveted within the class")
+  })
   # Afficher le nombre total de plots après filtrage
   output$total_plots <- renderText({
     total_plots <- nrow(filtered_data())  
